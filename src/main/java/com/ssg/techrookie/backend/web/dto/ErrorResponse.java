@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @Getter
 @Builder
@@ -20,12 +21,14 @@ public class ErrorResponse {
         this.message = errorCode.getMessage();
     }
 
-    public static ErrorResponse error(ErrorCode errorCode) {
-        return ErrorResponse.builder()
+    public static ResponseEntity<ErrorResponse> error(ErrorCode errorCode) {
+        return ResponseEntity
                 .status(errorCode.getStatus())
-                .code(errorCode.name())
-                .message(errorCode.getMessage())
-                .build();
+                .body(ErrorResponse.builder()
+                        .status(errorCode.getStatus())
+                        .code(errorCode.name())
+                        .message(errorCode.getMessage())
+                        .build());
     }
 
 }
