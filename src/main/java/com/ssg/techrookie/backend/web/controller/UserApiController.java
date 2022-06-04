@@ -6,10 +6,7 @@ import com.ssg.techrookie.backend.web.dto.ApiResponse;
 import com.ssg.techrookie.backend.web.dto.user.UserJoinRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -21,5 +18,11 @@ public class UserApiController {
     @PostMapping
     public ApiResponse<Long> userAdd(@Validated @RequestBody UserJoinRequestDto requestDto) {
         return ApiResponse.ok(userService.join(requestDto));
+    }
+
+    @DeleteMapping
+    public ApiResponse<Long> userDelete(@Validated @RequestParam Long userId) {
+        userService.delete(userId);
+        return ApiResponse.ok(userId);
     }
 }
