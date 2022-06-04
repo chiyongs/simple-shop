@@ -1,6 +1,7 @@
 package com.ssg.techrookie.backend.domain.item;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,4 +23,13 @@ public class Item {
 
     @Enumerated(EnumType.STRING)
     private ItemType itemType;
+
+    @Builder
+    public Item(String itemName, Integer itemPrice, LocalDate itemDisplayStartDate, LocalDate itemDisplayEndDate, ItemType itemType) {
+        this.itemName = itemName;
+        this.itemPrice = itemPrice;
+        this.itemDisplayStartDate = itemDisplayStartDate;
+        this.itemDisplayEndDate = itemDisplayEndDate;
+        this.itemType = itemType;
+    }
 }
