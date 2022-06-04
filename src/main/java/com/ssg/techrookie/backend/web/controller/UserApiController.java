@@ -1,6 +1,7 @@
 package com.ssg.techrookie.backend.web.controller;
 
 import com.ssg.techrookie.backend.service.UserService;
+import com.ssg.techrookie.backend.service.impl.UserServiceImpl;
 import com.ssg.techrookie.backend.web.dto.ApiResponse;
 import com.ssg.techrookie.backend.web.dto.user.UserJoinRequestDto;
 import lombok.RequiredArgsConstructor;
