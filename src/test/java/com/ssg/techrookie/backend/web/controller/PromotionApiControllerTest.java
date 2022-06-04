@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDate;
 
@@ -39,14 +40,11 @@ class PromotionApiControllerTest {
         LocalDate promotionStartDate = LocalDate.of(2022,1,1);
         LocalDate promotionEndDate = LocalDate.of(2023,1,1);
 
-        PromotionSaveRequestDto requestDto = PromotionSaveRequestDto.builder()
-                .promotionNm(promotionNm)
-                .discountAmount(discountAmount)
-                .promotionStartDate(promotionStartDate)
-                .promotionEndDate(promotionEndDate)
-                .build();
+        PromotionSaveRequestDto requestDto = requestDto(promotionNm, discountAmount, promotionStartDate, promotionEndDate);
 
-        String content = new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(requestDto);
+        String content = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .writeValueAsString(requestDto);
 
         given(promotionService.addPromotion(any(PromotionSaveRequestDto.class)))
                 .willReturn(1L);
@@ -59,6 +57,16 @@ class PromotionApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").value(1L))
                 .andDo(print());
+    }
+
+    private PromotionSaveRequestDto requestDto(String promotionNm, int discountAmount, LocalDate promotionStartDate, LocalDate promotionEndDate) {
+        PromotionSaveRequestDto requestDto = PromotionSaveRequestDto.builder()
+                .promotionNm(promotionNm)
+                .discountAmount(discountAmount)
+                .promotionStartDate(promotionStartDate)
+                .promotionEndDate(promotionEndDate)
+                .build();
+        return requestDto;
     }
 
 }
