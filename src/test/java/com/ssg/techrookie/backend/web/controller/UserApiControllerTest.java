@@ -13,9 +13,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserApiController.class)
 class UserApiControllerTest {
@@ -98,8 +98,19 @@ class UserApiControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(result ->
                         result.getResolvedException().getClass().isAssignableFrom(MethodArgumentNotValidException.class));
-
-
     }
+
+    @Test
+    void userDelete_성공() throws Exception {
+        //given
+
+        //when & then
+        mockMvc.perform(
+                        delete("/api/v1/users")
+                                .param("userId","1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(1));
+    }
+
 
 }

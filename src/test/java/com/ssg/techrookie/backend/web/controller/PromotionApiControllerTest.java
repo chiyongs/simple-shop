@@ -18,6 +18,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -57,6 +58,18 @@ class PromotionApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").value(1L))
                 .andDo(print());
+    }
+
+    @Test
+    void promotionDelete_성공() throws Exception {
+        //given
+
+        //when & then
+        mockMvc.perform(
+                        delete("/api/v1/promotions")
+                                .param("promotionId","1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(1));
     }
 
     private PromotionSaveRequestDto requestDto(String promotionNm, int discountAmount, LocalDate promotionStartDate, LocalDate promotionEndDate) {

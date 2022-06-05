@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -141,6 +142,18 @@ class ItemApiControllerTest {
                 .andExpect(
                         result -> result.getResolvedException().getClass().isAssignableFrom(MethodArgumentNotValidException.class)
                 );
+    }
+
+    @Test
+    void itemDelete_성공() throws Exception {
+        //given
+
+        //when & then
+        mockMvc.perform(
+                        delete("/api/v1/items")
+                                .param("itemId","1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(1));
     }
 
     private ItemSaveRequestDto itemSaveRequestDto(String itemName, int itemPrice, LocalDate displayStartDate, LocalDate displayEndDate, String itemType) {

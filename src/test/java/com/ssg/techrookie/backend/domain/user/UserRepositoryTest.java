@@ -41,4 +41,5 @@ class UserRepositoryTest {
         assertThat(findUser.getUserType()).isEqualTo(user.getUserType());
         assertThat(findUser.getUserStat()).isEqualTo(user.getUserStat());
     }
+    
 }
