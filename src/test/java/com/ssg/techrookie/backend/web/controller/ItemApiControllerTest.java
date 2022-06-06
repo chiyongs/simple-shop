@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ssg.techrookie.backend.domain.item.Item;
 import com.ssg.techrookie.backend.domain.item.ItemType;
 import com.ssg.techrookie.backend.service.ItemService;
+import com.ssg.techrookie.backend.web.dto.item.ItemResponseDto;
 import com.ssg.techrookie.backend.web.dto.item.ItemSaveRequestDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,12 +19,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,6 +38,35 @@ class ItemApiControllerTest {
 
     @MockBean
     private ItemService itemService;
+
+    @Test
+    void itemListAvailableForPurchaseByUser_성공() throws Exception {
+        //given
+        List<ItemResponseDto> responseDtos = new ArrayList<>();
+        for(int i=0;i<3;i++) {
+            responseDtos.add(new ItemResponseDto(
+                    item("test"+i, 10000*(i+1),
+                            LocalDate.of(2022,1,1),
+                            LocalDate.of(2023,12,31),
+                            ItemType.일반)));
+        }
+
+        given(itemService.findAvailableForPurchaseByUser(anyLong()))
+                .willReturn(responseDtos);
+
+        mockMvc.perform(
+                get("/api/v1/items/view")
+                        .param("userId", String.valueOf(1L)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.data[0].itemName").exists())
+                .andExpect(jsonPath("$.data[0].itemPrice").exists())
+                .andExpect(jsonPath("$.data[0].itemDisplayStartDate").exists())
+                .andExpect(jsonPath("$.data[0].itemDisplayEndDate").exists())
+                .andExpect(jsonPath("$.data[0].itemType").exists());
+
+    }
 
     @Test
     void itemAdd_성공() throws Exception {
@@ -163,6 +194,16 @@ class ItemApiControllerTest {
                 .itemType(itemType)
                 .itemDisplayStartDate(displayStartDate)
                 .itemDisplayEndDate(displayEndDate)
+                .build();
+    }
+
+    private static Item item(String itemName, int itemPrice, LocalDate displayStartDate, LocalDate displayEndDate, ItemType itemType) {
+        return Item.builder()
+                .itemName(itemName)
+                .itemPrice(itemPrice)
+                .itemDisplayStartDate(displayStartDate)
+                .itemDisplayEndDate(displayEndDate)
+                .itemType(itemType)
                 .build();
     }
 
