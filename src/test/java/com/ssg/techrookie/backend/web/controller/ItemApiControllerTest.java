@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ssg.techrookie.backend.domain.item.Item;
 import com.ssg.techrookie.backend.domain.item.ItemType;
+import com.ssg.techrookie.backend.exception.CustomException;
+import com.ssg.techrookie.backend.exception.ErrorCode;
 import com.ssg.techrookie.backend.service.ItemService;
 import com.ssg.techrookie.backend.web.dto.item.ItemResponseDto;
 import com.ssg.techrookie.backend.web.dto.item.ItemSaveRequestDto;
@@ -69,6 +71,32 @@ class ItemApiControllerTest {
     }
 
     @Test
+    void itemListAvailableForPurchaseByUser_실패() throws Exception {
+        //given
+        List<ItemResponseDto> responseDtos = new ArrayList<>();
+        for(int i=0;i<3;i++) {
+            responseDtos.add(new ItemResponseDto(
+                    item("test"+i, 10000*(i+1),
+                            LocalDate.of(2022,1,1),
+                            LocalDate.of(2023,12,31),
+                            ItemType.일반)));
+        }
+
+        given(itemService.findAvailableForPurchaseByUser(anyLong()))
+                .willThrow(new CustomException(ErrorCode.NO_PERMISSION_TO_LEFT_USER));
+
+        mockMvc.perform(
+                        get("/api/v1/items/view")
+                                .param("userId", String.valueOf(1L)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> result.getResolvedException().getClass().isAssignableFrom(CustomException.class))
+                .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_LEFT_USER.name()))
+                .andDo(print());
+
+
+    }
+
+    @Test
     void itemAdd_성공() throws Exception {
         //given
         String itemName = "testItem";
@@ -118,7 +146,8 @@ class ItemApiControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(
                         result -> result.getResolvedException().getClass().isAssignableFrom(MethodArgumentNotValidException.class)
-                );
+                )
+                .andExpect(jsonPath("$.code").value(ErrorCode.NOT_VALID_METHOD_ARGUMENT.name()));
     }
 
     @Test
@@ -145,7 +174,8 @@ class ItemApiControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(
                         result -> result.getResolvedException().getClass().isAssignableFrom(MethodArgumentNotValidException.class)
-                );
+                )
+                .andExpect(jsonPath("$.code").value(ErrorCode.NOT_VALID_METHOD_ARGUMENT.name()));
     }
 
     @Test
@@ -172,7 +202,8 @@ class ItemApiControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(
                         result -> result.getResolvedException().getClass().isAssignableFrom(MethodArgumentNotValidException.class)
-                );
+                )
+                .andExpect(jsonPath("$.code").value(ErrorCode.NOT_VALID_METHOD_ARGUMENT.name()));
     }
 
     @Test
