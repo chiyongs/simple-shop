@@ -54,7 +54,7 @@ public class ItemServiceImpl implements ItemService {
                     .stream().map(ItemResponseDto::new).collect(Collectors.toList());
         }
 
-        return itemRepository.findAllItemsCurrentlyDisplaying(LocalDate.now())
+        return itemRepository.findItemsCurrentlyDisplaying(LocalDate.now())
                 .stream().map(ItemResponseDto::new).collect(Collectors.toList());
     }
 }
