@@ -29,4 +29,10 @@ public class User {
         this.userType = userType;
         this.userStat = UserStat.정상;
     }
+
+    //== 비즈니스 로직 ==//
+    /** 회원 탈퇴 **/
+    public void withdraw() {
+        this.userStat = UserStat.탈퇴;
+    }
 }
