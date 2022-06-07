@@ -34,9 +34,13 @@ public class PromotionItem {
     }
 
     //== 연관관계 메서드 ==//
-    public void partOf(Promotion promotion) {
+    public boolean partOf(Promotion promotion) {
         this.promotion = promotion;
         this.promotionPrice = calculatePriceByPromotion();
+        if(promotionPrice > 0) {
+            return true;
+        }
+        return false;
     }
 
     //== 비즈니스 메서드 ==//

@@ -43,7 +43,8 @@ public class Promotion {
     //== 연관관계 메서드 ==//
     public void addPromotionItem(PromotionItem promotionItem) {
         promotionItems.add(promotionItem);
-        promotionItem.partOf(this);
+        // 프로모션 가격 결과가 0원 이하일시 프로모션이 적용되면 안됨
+        if(!promotionItem.partOf(this)) promotionItems.remove(promotionItem);
     }
 
     //== 조회 메서드 ==//
