@@ -32,13 +32,46 @@ class PromotionItemRepositoryTest {
     private List<Item> items;
     private Promotion currentPromotion, pastPromotion;
 
+    @DisplayName("프로모션 가격 결과가 0원 이하일 시 프로모션이 적용되지 않아야 함")
+    @Test
+    void calculatePriceByPromotion_lessOrEqual_Zero() {
+        //given
+        setUpItems();
+        String promotionNm = "2022 쓱데이";
+        int discountAmount = Integer.MAX_VALUE;
+        LocalDate promotionStartDate = LocalDate.of(2022,1,1);
+        LocalDate promotionEndDate = LocalDate.of(2023,1,31);
+
+        currentPromotion = Promotion.builder()
+                .promotionNm(promotionNm)
+                .discountAmount(discountAmount)
+                .promotionStartDate(promotionStartDate)
+                .promotionEndDate(promotionEndDate)
+                .build();
+
+
+        //when
+        List<PromotionItem> currentPromotionItems = items.stream().map(PromotionItem::new).collect(Collectors.toList());
+        for(PromotionItem promotionItem : currentPromotionItems) {
+            currentPromotion.addPromotionItem(promotionItem);
+        }
+        testEntityManager.persist(currentPromotion);
+        List<PromotionItem> all = promotionItemRepository.findAll();
+
+        //then
+        assertThat(all.size()).isEqualTo(0);
+
+    }
+
     @DisplayName("현재 진행중인 프로모션이 적용된 상품만 조회_성공")
     @Test
     void findByPromotionCurrentlyInProgress_성공() {
+        //given
         setUpItems();
         setUpPastPromotion();
         setUpCurrentPromotion();
 
+        //when
         List<PromotionItem> currentPromotionItems = items.stream().map(PromotionItem::new).collect(Collectors.toList());
         for(PromotionItem promotionItem : currentPromotionItems) {
             currentPromotion.addPromotionItem(promotionItem);
@@ -52,6 +85,7 @@ class PromotionItemRepositoryTest {
         testEntityManager.persist(currentPromotion);
         testEntityManager.persist(pastPromotion);
 
+        //then
         List<PromotionItem> allPromotionItems = promotionItemRepository.findAll();
         List<PromotionItem> byPromotionCurrentlyInProgress = promotionItemRepository.findByPromotionCurrentlyInProgress(LocalDate.now());
 
@@ -65,10 +99,12 @@ class PromotionItemRepositoryTest {
     @DisplayName("상품에 대한 진행중인 프로모션이 있는 경우 조회_성공")
     @Test
     void findByItemAndPromotionCurrentlyInProgress_성공() {
+        //given
         setUpItems();
         setUpPastPromotion();
         setUpCurrentPromotion();
 
+        //when
         List<PromotionItem> currentPromotionItems = items.stream().map(PromotionItem::new).collect(Collectors.toList());
         for(PromotionItem promotionItem : currentPromotionItems) {
             currentPromotion.addPromotionItem(promotionItem);
@@ -82,6 +118,7 @@ class PromotionItemRepositoryTest {
         testEntityManager.persist(currentPromotion);
         testEntityManager.persist(pastPromotion);
 
+        //then
         for(Item item : items) {
             assertThat(promotionItemRepository.findByItemWhichPromotionCurrentlyInProgressOrderByPromotionPrice(item, LocalDate.now()).size())
                     .isEqualTo(1);

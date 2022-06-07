@@ -34,25 +34,18 @@ public class PromotionItem {
     }
 
     //== 연관관계 메서드 ==//
-    public void partOf(Promotion promotion) {
+    public boolean partOf(Promotion promotion) {
         this.promotion = promotion;
         this.promotionPrice = calculatePriceByPromotion();
+        if(promotionPrice > 0) return true;
+        return false;
     }
 
     //== 비즈니스 메서드 ==//
     /** 프로모션 적용 후 가격 계산 **/
     public int calculatePriceByPromotion() {
-        if(promotion.isDiscountByAmount()) {
-             if(item.getItemPrice() - promotion.getDiscountAmount() > 0) {
-                 return item.getItemPrice() - promotion.getDiscountAmount();
-             }
-             return item.getItemPrice();
-        }
-
-        if(item.getItemPrice() * (1 - promotion.getDiscountRate()) > 0) {
-           return (int) (item.getItemPrice() * (1 - promotion.getDiscountRate()));
-        }
-        return item.getItemPrice();
+        if(promotion.isDiscountByAmount()) return item.getItemPrice() - promotion.getDiscountAmount();
+        return (int) (item.getItemPrice() * (1 - promotion.getDiscountRate()));
     }
 
 
