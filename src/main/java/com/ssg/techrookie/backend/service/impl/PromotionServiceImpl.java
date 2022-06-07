@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -48,7 +50,9 @@ public class PromotionServiceImpl implements PromotionService {
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PROMOTION_NOT_FOUND));
 
-        for(Long itemId : itemList) {
+        // Set을 이용해 itemId가 중복되지 않도록 설정
+        Set<Long> itemsId = new HashSet<>(itemList);
+        for(Long itemId : itemsId) {
             Item item = itemRepository.findById(itemId).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
             promotion.addPromotionItem(new PromotionItem(item));
         }
