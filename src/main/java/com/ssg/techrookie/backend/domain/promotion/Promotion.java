@@ -28,7 +28,7 @@ public class Promotion {
     private LocalDate promotionStartDate;
     private LocalDate promotionEndDate;
 
-    @OneToMany(mappedBy = "promotion", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "promotion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PromotionItem> promotionItems = new ArrayList<>();
 
     @Builder
@@ -50,4 +50,5 @@ public class Promotion {
     public boolean isDiscountByAmount() {
         return discountAmount != null && discountRate == null;
     }
+
 }

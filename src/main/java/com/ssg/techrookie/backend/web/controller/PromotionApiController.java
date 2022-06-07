@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/promotions")
 @RestController
@@ -22,6 +24,12 @@ public class PromotionApiController {
     @DeleteMapping
     public ApiResponse<Long> promotionDelete(@Validated @RequestParam Long promotionId) {
         promotionService.deletePromotion(promotionId);
+        return ApiResponse.ok(promotionId);
+    }
+
+    @PostMapping("/items")
+    public ApiResponse<Long> promotionItemsAddOnPromotion(@Validated @RequestParam Long promotionId, @Validated @RequestBody List<Long> itemList) {
+        promotionService.addPromotionItemsOnPromotion(promotionId, itemList);
         return ApiResponse.ok(promotionId);
     }
 }
