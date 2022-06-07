@@ -3,7 +3,6 @@ package com.ssg.techrookie.backend.service.impl;
 import com.ssg.techrookie.backend.domain.item.Item;
 import com.ssg.techrookie.backend.domain.item.ItemRepository;
 import com.ssg.techrookie.backend.domain.item.ItemType;
-import com.ssg.techrookie.backend.domain.promotionitem.PromotionItem;
 import com.ssg.techrookie.backend.domain.promotionitem.PromotionItemRepository;
 import com.ssg.techrookie.backend.domain.user.User;
 import com.ssg.techrookie.backend.domain.user.UserRepository;
@@ -14,7 +13,6 @@ import com.ssg.techrookie.backend.exception.ErrorCode;
 import com.ssg.techrookie.backend.service.ItemService;
 import com.ssg.techrookie.backend.web.dto.item.ItemResponseDto;
 import com.ssg.techrookie.backend.web.dto.item.ItemSaveRequestDto;
-import com.ssg.techrookie.backend.web.dto.item.PromotionItemResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,17 +62,4 @@ public class ItemServiceImpl implements ItemService {
                 .stream().map(ItemResponseDto::new).collect(Collectors.toList());
     }
 
-    @Override
-    public PromotionItemResponseDto findItemWithPromotion(Long itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
-
-        List<PromotionItem> findPromotionItems = promotionItemRepository.findByItemWhichPromotionCurrentlyInProgressOrderByPromotionPrice(item, LocalDate.now());
-
-        if(findPromotionItems.isEmpty()) {
-            return new PromotionItemResponseDto(item);
-        }
-
-        return new PromotionItemResponseDto(findPromotionItems.get(0));
-
-    }
 }

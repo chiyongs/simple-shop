@@ -34,8 +34,4 @@ public class ItemApiController {
         return ApiResponse.ok(itemService.findAvailableForPurchaseByUser(userId));
     }
 
-    @GetMapping("/{itemId}")
-    public ApiResponse<PromotionItemResponseDto> itemDetailWithPromotion(@Validated @PathVariable Long itemId) {
-        return ApiResponse.ok(itemService.findItemWithPromotion(itemId));
-    }
 }
