@@ -62,25 +62,34 @@ class PromotionItemRepositoryTest {
 
     }
 
-    private void savePromotion(PromotionItem promotionItem1, PromotionItem promotionItem2, PromotionItem promotionItem3) {
-        String promotionNm = "2022 쓱데이";
-        int discountAmount = 1000;
-        LocalDate promotionStartDate = LocalDate.of(2022,1,1);
-        LocalDate promotionEndDate = LocalDate.of(2023,1,1);
+    @DisplayName("상품에 대한 진행중인 프로모션이 있는 경우 조회_성공")
+    @Test
+    void findByItemAndPromotionCurrentlyInProgress_성공() {
+        setUpItems();
+        setUpPastPromotion();
+        setUpCurrentPromotion();
 
-        Promotion promotion = Promotion.builder()
-                .promotionNm(promotionNm)
-                .discountAmount(discountAmount)
-                .promotionStartDate(promotionStartDate)
-                .promotionEndDate(promotionEndDate)
-                .build();
-
-        List<PromotionItem> promotionItemList = List.of(promotionItem1, promotionItem2, promotionItem3);
-        for(PromotionItem promotionItem : promotionItemList) {
-            promotion.addPromotionItem(promotionItem);
+        List<PromotionItem> currentPromotionItems = items.stream().map(PromotionItem::new).collect(Collectors.toList());
+        for(PromotionItem promotionItem : currentPromotionItems) {
+            currentPromotion.addPromotionItem(promotionItem);
         }
 
-        testEntityManager.persist(promotion);
+        List<PromotionItem> pastPromotionItems = items.stream().map(PromotionItem::new).collect(Collectors.toList());
+        for(PromotionItem promotionItem : pastPromotionItems) {
+            pastPromotion.addPromotionItem(promotionItem);
+        }
+
+        testEntityManager.persist(currentPromotion);
+        testEntityManager.persist(pastPromotion);
+
+        for(Item item : items) {
+            assertThat(promotionItemRepository.findByItemWhichPromotionCurrentlyInProgressOrderByPromotionPrice(item, LocalDate.now()).size())
+                    .isEqualTo(1);
+        }
+        assertThat(promotionItemRepository.findByItemWhichPromotionCurrentlyInProgressOrderByPromotionPrice(items.get(0), LocalDate.now()).get(0).getPromotionPrice())
+                .isEqualTo(19000);
+
+
     }
 
     private void setUpItems() {
