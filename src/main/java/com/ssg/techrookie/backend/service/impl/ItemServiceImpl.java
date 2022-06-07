@@ -3,6 +3,7 @@ package com.ssg.techrookie.backend.service.impl;
 import com.ssg.techrookie.backend.domain.item.Item;
 import com.ssg.techrookie.backend.domain.item.ItemRepository;
 import com.ssg.techrookie.backend.domain.item.ItemType;
+import com.ssg.techrookie.backend.domain.promotionitem.PromotionItemRepository;
 import com.ssg.techrookie.backend.domain.user.User;
 import com.ssg.techrookie.backend.domain.user.UserRepository;
 import com.ssg.techrookie.backend.domain.user.UserStat;
@@ -28,6 +29,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final PromotionItemRepository promotionItemRepository;
 
     @Override
     @Transactional
@@ -36,8 +38,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public void deleteItem(Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+        promotionItemRepository.deleteByItem(item);
         itemRepository.delete(item);
     }
 
@@ -54,7 +58,8 @@ public class ItemServiceImpl implements ItemService {
                     .stream().map(ItemResponseDto::new).collect(Collectors.toList());
         }
 
-        return itemRepository.findAllItemsCurrentlyDisplaying(LocalDate.now())
+        return itemRepository.findItemsCurrentlyDisplaying(LocalDate.now())
                 .stream().map(ItemResponseDto::new).collect(Collectors.toList());
     }
+
 }
