@@ -11,19 +11,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class PromotionServiceImpl implements PromotionService {
 
     private final PromotionRepository promotionRepository;
 
-    @Transactional
     @Override
+    @Transactional
     public Long addPromotion(PromotionSaveRequestDto requestDto) {
         return promotionRepository.save(requestDto.toEntity()).getId();
     }
 
     @Override
+    @Transactional
     public void deletePromotion(Long promotionId) {
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PROMOTION_NOT_FOUND));

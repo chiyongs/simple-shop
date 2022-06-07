@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class ItemServiceImpl implements ItemService {
 
@@ -41,8 +40,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public void deleteItem(Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+        promotionItemRepository.deleteByItem(item);
         itemRepository.delete(item);
     }
 

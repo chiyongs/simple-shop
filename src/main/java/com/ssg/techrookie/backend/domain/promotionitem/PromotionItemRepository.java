@@ -9,6 +9,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface PromotionItemRepository extends JpaRepository<PromotionItem, Long> {
+
+    void deleteByItem(Item item);
+
     @Query(value = "SELECT p FROM PromotionItem p" +
             " WHERE p.promotion.promotionStartDate <= :now" +
             " AND p.promotion.promotionEndDate >= :now")
