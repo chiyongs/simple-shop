@@ -1,9 +1,5 @@
 package com.ssg.techrookie.backend.domain.item;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -11,9 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -80,7 +74,7 @@ class ItemRepositoryTest {
         makeItemList();
 
         //when
-        List<Item> all = itemRepository.findAllItemsCurrentlyDisplaying(LocalDate.now());
+        List<Item> all = itemRepository.findItemsCurrentlyDisplaying(LocalDate.now());
 
         //then
         assertThat(all.size()).isEqualTo(2);
