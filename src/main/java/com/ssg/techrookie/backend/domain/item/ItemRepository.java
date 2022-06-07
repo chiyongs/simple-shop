@@ -11,7 +11,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query(value = "SELECT i FROM Item i" +
             " WHERE i.itemDisplayStartDate <= :now" +
             " AND i.itemDisplayEndDate >= :now")
-    List<Item> findAllItemsCurrentlyDisplaying(@Param("now") LocalDate now);
+    List<Item> findItemsCurrentlyDisplaying(@Param("now") LocalDate now);
 
     @Query(value = "SELECT i FROM Item i" +
             " WHERE i.itemDisplayStartDate <= :now" +
