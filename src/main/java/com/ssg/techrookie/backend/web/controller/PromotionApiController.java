@@ -27,8 +27,8 @@ public class PromotionApiController {
         return ApiResponse.ok(promotionId);
     }
 
-    @PostMapping("/items")
-    public ApiResponse<Long> promotionItemsAddOnPromotion(@Validated @RequestParam Long promotionId, @Validated @RequestBody List<Long> itemList) {
+    @PostMapping("/{promotionId}/items")
+    public ApiResponse<Long> promotionItemsAddOnPromotion(@Validated @PathVariable Long promotionId, @Validated @RequestBody List<Long> itemList) {
         promotionService.addPromotionItemsOnPromotion(promotionId, itemList);
         return ApiResponse.ok(promotionId);
     }
