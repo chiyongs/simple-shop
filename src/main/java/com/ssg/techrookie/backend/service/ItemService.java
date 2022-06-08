@@ -9,5 +9,6 @@ public interface ItemService {
     Long addItem(ItemSaveRequestDto requestDto);
     void deleteItem(Long itemId);
     List<ItemResponseDto> findAvailableForPurchaseByUser(Long userId);
+    ItemResponseDto findById(Long itemId);
 
 }
