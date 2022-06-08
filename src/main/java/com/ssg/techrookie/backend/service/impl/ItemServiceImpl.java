@@ -52,14 +52,22 @@ public class ItemServiceImpl implements ItemService {
         if(user.getUserStat() == UserStat.탈퇴) {
             throw new CustomException(ErrorCode.NO_PERMISSION_TO_LEFT_USER);
         }
-
+        // 일반회원인 경우, 일반 품목 상품만 검색
         if(user.getUserType() == UserType.일반) {
             return itemRepository.findCurrentlyDisplayingItemsByItemType(LocalDate.now(), ItemType.일반)
                     .stream().map(ItemResponseDto::new).collect(Collectors.toList());
         }
-
+        // 기업회원인 경우, 일반 품목과 기업 품목 상품 모두 검색
         return itemRepository.findItemsCurrentlyDisplaying(LocalDate.now())
                 .stream().map(ItemResponseDto::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public ItemResponseDto findById(Long itemId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+
+        return new ItemResponseDto(item);
     }
 
 }

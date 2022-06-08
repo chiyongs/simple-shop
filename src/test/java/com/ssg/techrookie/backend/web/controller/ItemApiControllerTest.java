@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ssg.techrookie.backend.domain.item.Item;
 import com.ssg.techrookie.backend.domain.item.ItemType;
+import com.ssg.techrookie.backend.domain.user.User;
+import com.ssg.techrookie.backend.domain.user.UserType;
 import com.ssg.techrookie.backend.exception.CustomException;
 import com.ssg.techrookie.backend.exception.ErrorCode;
 import com.ssg.techrookie.backend.service.ItemService;
 import com.ssg.techrookie.backend.web.dto.item.ItemResponseDto;
 import com.ssg.techrookie.backend.web.dto.item.ItemSaveRequestDto;
+import com.ssg.techrookie.backend.web.dto.user.UserResponseDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +43,35 @@ class ItemApiControllerTest {
 
     @MockBean
     private ItemService itemService;
+
+    @Test
+    void itemDetail_성공() throws Exception {
+        //given
+        String itemName = "노브랜드 버터링";
+        int itemPrice = 20000;
+        LocalDate displayStartDate = LocalDate.of(2022,1,1);
+        LocalDate displayEndDate = LocalDate.of(2023,1,1);
+        ItemType itemType = ItemType.일반;
+        Item item = Item.builder()
+                .itemName(itemName)
+                .itemPrice(itemPrice)
+                .itemDisplayStartDate(displayStartDate)
+                .itemDisplayEndDate(displayEndDate)
+                .itemType(itemType)
+                .build();
+        ItemResponseDto responseDto = new ItemResponseDto(item);
+
+        given(itemService.findById(anyLong()))
+                .willReturn(responseDto);
+
+        //when & then
+        mockMvc.perform(
+                        get("/api/v1/items/"+1L))
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.data.itemName").value(itemName))
+                .andExpect(jsonPath("$.data.itemType").value(itemType.getType()))
+                .andExpect(jsonPath("$.data.itemPrice").value(itemPrice));
+    }
 
     @Test
     void itemListAvailableForPurchaseByUser_성공() throws Exception {

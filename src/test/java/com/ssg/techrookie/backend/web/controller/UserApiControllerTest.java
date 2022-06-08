@@ -1,8 +1,11 @@
 package com.ssg.techrookie.backend.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssg.techrookie.backend.domain.user.User;
+import com.ssg.techrookie.backend.domain.user.UserType;
 import com.ssg.techrookie.backend.service.UserService;
 import com.ssg.techrookie.backend.web.dto.user.UserJoinRequestDto;
+import com.ssg.techrookie.backend.web.dto.user.UserResponseDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,10 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserApiController.class)
@@ -25,6 +26,29 @@ class UserApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Test
+    void userDetail_성공() throws Exception {
+        //given
+        String userName = "testUser";
+        UserType userType = UserType.일반;
+        User user = User.builder()
+                .userName(userName)
+                .userType(userType)
+                .build();
+        UserResponseDto responseDto = new UserResponseDto(user);
+
+        given(userService.findById(anyLong()))
+                .willReturn(responseDto);
+
+        //when & then
+        mockMvc.perform(
+                get("/api/v1/users/"+1L))
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.data.userName").exists())
+                .andExpect(jsonPath("$.data.userType").exists())
+                .andExpect(jsonPath("$.data.userStat").exists());
+    }
 
     @Test
     void userAdd_성공() throws Exception {
