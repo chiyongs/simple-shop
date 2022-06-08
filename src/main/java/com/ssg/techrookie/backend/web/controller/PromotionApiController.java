@@ -3,6 +3,7 @@ package com.ssg.techrookie.backend.web.controller;
 import com.ssg.techrookie.backend.service.PromotionService;
 import com.ssg.techrookie.backend.web.dto.ApiResponse;
 import com.ssg.techrookie.backend.web.dto.item.PromotionItemResponseDto;
+import com.ssg.techrookie.backend.web.dto.promotion.PromotionResponseDto;
 import com.ssg.techrookie.backend.web.dto.promotion.PromotionSaveRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -34,8 +35,13 @@ public class PromotionApiController {
         return ApiResponse.ok(promotionId);
     }
 
-    @GetMapping("/{itemId}")
-    public ApiResponse<PromotionItemResponseDto> promotionDetailOnItem(@Validated @PathVariable Long itemId) {
+    @GetMapping
+    public ApiResponse<PromotionItemResponseDto> promotionDetailOnItem(@Validated @RequestParam Long itemId) {
         return ApiResponse.ok(promotionService.findPromotionByItem(itemId));
+    }
+
+    @GetMapping("/{promotionId}")
+    public ApiResponse<PromotionResponseDto> promotionDetail(@Validated @PathVariable Long promotionId) {
+        return ApiResponse.ok(promotionService.findById(promotionId));
     }
 }

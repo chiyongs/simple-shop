@@ -10,6 +10,7 @@ import com.ssg.techrookie.backend.exception.CustomException;
 import com.ssg.techrookie.backend.exception.ErrorCode;
 import com.ssg.techrookie.backend.service.PromotionService;
 import com.ssg.techrookie.backend.web.dto.item.PromotionItemResponseDto;
+import com.ssg.techrookie.backend.web.dto.promotion.PromotionResponseDto;
 import com.ssg.techrookie.backend.web.dto.promotion.PromotionSaveRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -53,21 +54,31 @@ public class PromotionServiceImpl implements PromotionService {
         // Set을 이용해 itemId가 중복되지 않도록 설정
         Set<Long> itemsId = new HashSet<>(itemList);
         for(Long itemId : itemsId) {
-            Item item = itemRepository.findById(itemId).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+            Item item = itemRepository.findById(itemId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
             promotion.addPromotionItem(new PromotionItem(item));
         }
     }
 
     @Override
     public PromotionItemResponseDto findPromotionByItem(Long itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
         List<PromotionItem> findPromotionItems = promotionItemRepository.findByItemWhichPromotionCurrentlyInProgressOrderByPromotionPrice(item, LocalDate.now());
-
+        // 상품이 프로모션에 적용되어있지 않거나 적용된 프로모션이 현재 전시중인 아닌 경우
         if(findPromotionItems.isEmpty()) {
             return new PromotionItemResponseDto(item);
         }
 
         return new PromotionItemResponseDto(findPromotionItems.get(0));
+    }
+
+    @Override
+    public PromotionResponseDto findById(Long promotionId) {
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PROMOTION_NOT_FOUND));
+
+        return new PromotionResponseDto(promotion);
     }
 }
