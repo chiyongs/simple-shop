@@ -4,6 +4,7 @@ import com.ssg.techrookie.backend.service.UserService;
 import com.ssg.techrookie.backend.service.impl.UserServiceImpl;
 import com.ssg.techrookie.backend.web.dto.ApiResponse;
 import com.ssg.techrookie.backend.web.dto.user.UserJoinRequestDto;
+import com.ssg.techrookie.backend.web.dto.user.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,5 +25,10 @@ public class UserApiController {
     public ApiResponse<Long> userDelete(@Validated @RequestParam Long userId) {
         userService.delete(userId);
         return ApiResponse.ok(userId);
+    }
+
+    @GetMapping("/{userId}")
+    public ApiResponse<UserResponseDto> userDetail(@Validated @PathVariable Long userId) {
+        return ApiResponse.ok(userService.findById(userId));
     }
 }
