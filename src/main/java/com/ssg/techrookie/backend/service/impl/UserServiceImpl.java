@@ -6,6 +6,7 @@ import com.ssg.techrookie.backend.exception.CustomException;
 import com.ssg.techrookie.backend.exception.ErrorCode;
 import com.ssg.techrookie.backend.service.UserService;
 import com.ssg.techrookie.backend.web.dto.user.UserJoinRequestDto;
+import com.ssg.techrookie.backend.web.dto.user.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,5 +30,13 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         userRepository.delete(user);
+    }
+
+    @Override
+    public UserResponseDto findById(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        return new UserResponseDto(user);
     }
 }
