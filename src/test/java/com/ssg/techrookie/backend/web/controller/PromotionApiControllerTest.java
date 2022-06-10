@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -40,8 +41,9 @@ class PromotionApiControllerTest {
         int discountAmount = 1000;
         LocalDate promotionStartDate = LocalDate.of(2022,1,1);
         LocalDate promotionEndDate = LocalDate.of(2023,1,1);
+        List<Long> itemsIdList = List.of(1L,2L,3L);
 
-        PromotionSaveRequestDto requestDto = requestDto(promotionNm, discountAmount, promotionStartDate, promotionEndDate);
+        PromotionSaveRequestDto requestDto = requestDto(promotionNm, discountAmount, promotionStartDate, promotionEndDate, itemsIdList);
 
         String content = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
@@ -72,12 +74,13 @@ class PromotionApiControllerTest {
                 .andExpect(jsonPath("$.data").value(1));
     }
 
-    private PromotionSaveRequestDto requestDto(String promotionNm, int discountAmount, LocalDate promotionStartDate, LocalDate promotionEndDate) {
+    private PromotionSaveRequestDto requestDto(String promotionNm, int discountAmount, LocalDate promotionStartDate, LocalDate promotionEndDate, List<Long> itemsIdList) {
         PromotionSaveRequestDto requestDto = PromotionSaveRequestDto.builder()
                 .promotionNm(promotionNm)
                 .discountAmount(discountAmount)
                 .promotionStartDate(promotionStartDate)
                 .promotionEndDate(promotionEndDate)
+                .itemsIdList(itemsIdList)
                 .build();
         return requestDto;
     }
