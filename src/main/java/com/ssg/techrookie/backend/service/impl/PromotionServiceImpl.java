@@ -33,7 +33,11 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     @Transactional
     public Long addPromotion(PromotionSaveRequestDto requestDto) {
-        return promotionRepository.save(requestDto.toEntity()).getId();
+        Promotion promotion = requestDto.toEntity();
+
+        addNonDuplicatePromotionItem(promotion, requestDto.getItemsIdList());
+
+        return promotionRepository.save(promotion).getId();
     }
 
     @Override
@@ -43,21 +47,6 @@ public class PromotionServiceImpl implements PromotionService {
                 .orElseThrow(() -> new CustomException(ErrorCode.PROMOTION_NOT_FOUND));
 
         promotionRepository.delete(promotion);
-    }
-
-    @Override
-    @Transactional
-    public void addPromotionItemsOnPromotion(Long promotionId, List<Long> itemList) {
-        Promotion promotion = promotionRepository.findById(promotionId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PROMOTION_NOT_FOUND));
-
-        // Set을 이용해 itemId가 중복되지 않도록 설정
-        Set<Long> itemsId = new HashSet<>(itemList);
-        for(Long itemId : itemsId) {
-            Item item = itemRepository.findById(itemId)
-                    .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
-            promotion.addPromotionItem(new PromotionItem(item));
-        }
     }
 
     @Override
@@ -80,5 +69,16 @@ public class PromotionServiceImpl implements PromotionService {
                 .orElseThrow(() -> new CustomException(ErrorCode.PROMOTION_NOT_FOUND));
 
         return new PromotionResponseDto(promotion);
+    }
+
+    /** 중복되는 상품을 프로모션에 적용시키지 않기 위해 중복 검사 후 프로모션을 적용하는 메서드 **/
+    private void addNonDuplicatePromotionItem(Promotion promotion, List<Long> requestItemsIdList) {
+        Set<Long> itemsId = new HashSet<>(requestItemsIdList);
+        for (Long itemId : itemsId) {
+            Item item = itemRepository.findById(itemId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+
+            promotion.addPromotionItem(new PromotionItem(item));
+        }
     }
 }

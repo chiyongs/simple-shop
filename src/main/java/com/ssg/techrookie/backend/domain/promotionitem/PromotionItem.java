@@ -9,7 +9,6 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-@ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
