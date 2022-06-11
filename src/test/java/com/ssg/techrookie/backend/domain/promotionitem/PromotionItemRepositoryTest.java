@@ -3,8 +3,6 @@ package com.ssg.techrookie.backend.domain.promotionitem;
 import com.ssg.techrookie.backend.domain.item.Item;
 import com.ssg.techrookie.backend.domain.item.ItemType;
 import com.ssg.techrookie.backend.domain.promotion.Promotion;
-
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
@@ -60,39 +58,6 @@ class PromotionItemRepositoryTest {
 
         //then
         assertThat(all.size()).isEqualTo(0);
-
-    }
-
-    @DisplayName("현재 진행중인 프로모션이 적용된 상품만 조회_성공")
-    @Test
-    void findByPromotionCurrentlyInProgress_성공() {
-        //given
-        setUpItems();
-        setUpPastPromotion();
-        setUpCurrentPromotion();
-
-        //when
-        List<PromotionItem> currentPromotionItems = items.stream().map(PromotionItem::new).collect(Collectors.toList());
-        for(PromotionItem promotionItem : currentPromotionItems) {
-            currentPromotion.addPromotionItem(promotionItem);
-        }
-
-        List<PromotionItem> pastPromotionItems = items.stream().map(PromotionItem::new).collect(Collectors.toList());
-        for(PromotionItem promotionItem : pastPromotionItems) {
-            pastPromotion.addPromotionItem(promotionItem);
-        }
-
-        testEntityManager.persist(currentPromotion);
-        testEntityManager.persist(pastPromotion);
-
-        //then
-        List<PromotionItem> allPromotionItems = promotionItemRepository.findAll();
-        List<PromotionItem> byPromotionCurrentlyInProgress = promotionItemRepository.findByPromotionCurrentlyInProgress(LocalDate.now());
-
-        assertThat(byPromotionCurrentlyInProgress.stream().allMatch(promotionItem -> promotionItem.getPromotion().getPromotionNm().equals("2022 쓱데이"))).isTrue();
-        assertThat(byPromotionCurrentlyInProgress.stream().allMatch(promotionItem -> promotionItem.getPromotion().getPromotionStartDate().isBefore(LocalDate.now()))).isTrue();
-        assertThat(byPromotionCurrentlyInProgress.stream().allMatch(promotionItem -> promotionItem.getPromotion().getPromotionEndDate().isAfter(LocalDate.now()))).isTrue();
-        assertThat(byPromotionCurrentlyInProgress.size()).isEqualTo(3);
 
     }
 
