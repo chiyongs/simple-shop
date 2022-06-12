@@ -26,7 +26,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(value = CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
-        return ErrorResponse.error(e.getErrorCode());
+        return ErrorResponse.error(e);
     }
 
 
