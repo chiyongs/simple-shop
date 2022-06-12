@@ -13,14 +13,10 @@ public interface PromotionItemRepository extends JpaRepository<PromotionItem, Lo
     void deleteByItem(Item item);
 
     @Query(value = "SELECT p FROM PromotionItem p" +
-            " WHERE p.promotion.promotionStartDate <= :now" +
-            " AND p.promotion.promotionEndDate >= :now")
-    List<PromotionItem> findByPromotionCurrentlyInProgress(@Param("now") LocalDate now);
-
-    @Query(value = "SELECT p FROM PromotionItem p" +
+            " JOIN FETCH p.promotion pro" +
             " WHERE p.item = :item" +
-            " AND p.promotion.promotionStartDate <= :now" +
-            " AND p.promotion.promotionEndDate >= :now" +
+            " AND pro.promotionStartDate <= :now" +
+            " AND pro.promotionEndDate >= :now" +
             " ORDER BY p.promotionPrice")
     List<PromotionItem> findByItemWhichPromotionCurrentlyInProgressOrderByPromotionPrice(@Param("item") Item item, @Param("now") LocalDate now);
 }

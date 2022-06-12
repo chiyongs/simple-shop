@@ -74,11 +74,15 @@ public class PromotionServiceImpl implements PromotionService {
     /** 중복되는 상품을 프로모션에 적용시키지 않기 위해 중복 검사 후 프로모션을 적용하는 메서드 **/
     private void addNonDuplicatePromotionItem(Promotion promotion, List<Long> requestItemsIdList) {
         Set<Long> itemsId = new HashSet<>(requestItemsIdList);
-        for (Long itemId : itemsId) {
-            Item item = itemRepository.findById(itemId)
-                    .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+        List<Item> findItems = itemRepository.findByIds(itemsId);
 
+        if(findItems.size() != itemsId.size()) {
+            throw new CustomException(ErrorCode.ITEM_NOT_FOUND);
+        }
+
+        for(Item item : findItems) {
             promotion.addPromotionItem(new PromotionItem(item));
         }
+
     }
 }

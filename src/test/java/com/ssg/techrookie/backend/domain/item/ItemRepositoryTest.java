@@ -7,7 +7,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,6 +24,25 @@ class ItemRepositoryTest {
 
     @Autowired
     private ItemRepository itemRepository;
+
+    @Test
+    void findByIds_성공() {
+        //given
+        makeItemList();
+        List<Item> allItems = itemRepository.findAll();
+        Set<Long> ids = allItems.stream().map(Item::getId).collect(Collectors.toSet());
+        Set<Long> maxAndMin = Set.of(Long.MAX_VALUE, Long.MIN_VALUE);
+
+        //when
+        List<Item> byIds = itemRepository.findByIds(ids);
+        List<Item> maxAndMinId = itemRepository.findByIds(maxAndMin);
+
+        //then
+        assertThat(byIds.size()).isEqualTo(allItems.size());
+        assertThat(maxAndMinId.size()).isEqualTo(0);
+        assertThat(byIds.stream().allMatch(item -> ids.contains(item.getId()))).isTrue();
+
+    }
 
     @Test
     void item_save_성공() {

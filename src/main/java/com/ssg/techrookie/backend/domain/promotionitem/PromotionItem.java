@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class PromotionItem {
 
     @Id @GeneratedValue
-    @Column(name = "promotion_line_id")
+    @Column(name = "promotion_item_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
