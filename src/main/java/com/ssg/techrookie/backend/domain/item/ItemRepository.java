@@ -6,8 +6,14 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
+
+    @Query(value = "SELECT i FROM Item i" +
+            " WHERE i.id in :ids")
+    List<Item> findByIds(@Param("ids") Set<Long> ids);
+
     @Query(value = "SELECT i FROM Item i" +
             " WHERE i.itemDisplayStartDate <= :now" +
             " AND i.itemDisplayEndDate >= :now")

@@ -1,5 +1,6 @@
 package com.ssg.techrookie.backend.web.dto;
 
+import com.ssg.techrookie.backend.exception.CustomException;
 import com.ssg.techrookie.backend.exception.ErrorCode;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +29,17 @@ public class ErrorResponse {
                         .status(errorCode.getStatus())
                         .code(errorCode.name())
                         .message(errorCode.getMessage())
+                        .build());
+    }
+
+    public static ResponseEntity<ErrorResponse> error(CustomException e) {
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(ErrorResponse.builder()
+                        .status(e.getErrorCode().getStatus())
+                        .code(e.getErrorCode().name())
+                        .message(e.getErrorTarget().isBlank() ?
+                                        e.getErrorCode().getMessage() : e.getErrorCode().getMessage() + " ID: " + e.getErrorTarget())
                         .build());
     }
 
