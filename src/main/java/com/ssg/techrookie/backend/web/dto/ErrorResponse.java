@@ -39,7 +39,7 @@ public class ErrorResponse {
                         .status(e.getErrorCode().getStatus())
                         .code(e.getErrorCode().name())
                         .message(e.getErrorTarget().isBlank() ?
-                                        e.getErrorCode().getMessage() : e.getErrorCode().getMessage() + " : " + e.getErrorTarget())
+                                        e.getErrorCode().getMessage() : e.getErrorCode().getMessage() + " ID: " + e.getErrorTarget())
                         .build());
     }
 

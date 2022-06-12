@@ -3,14 +3,14 @@ package com.ssg.techrookie.backend.web.controller;
 import com.ssg.techrookie.backend.exception.CustomException;
 import com.ssg.techrookie.backend.exception.ErrorCode;
 import com.ssg.techrookie.backend.web.dto.ErrorResponse;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
@@ -26,6 +26,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(value = CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
+        log.error("[handleCustomException] {} : {}",e.getErrorCode().name(), e.getErrorCode().getMessage());
         return ErrorResponse.error(e);
     }
 
